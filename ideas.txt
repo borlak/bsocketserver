@@ -1,0 +1,106 @@
+Plan
+----
+[ ]Requests to handle:
+   [ ]TCP/IP Sockets
+   [ ]Websockets
+   [ ]Ajax (http) requests
+   [ ]BOSH requests
+   [ ]Flash sockets
+
+[ ]Scripting language:
+   [ ]Lua
+   [ ]Python
+
+[ ]Threading:
+   One thread for connection handling?  Perhaps split up reading/writing by threads, round robin.  Kernel messages me
+   thread X is ready, I send it to thread 1.  Kernel says thread Y is ready, I send it to thread 2.  When threads are
+   have read to a finishing point (JSON, counting braces) it throws it into an input queue that Lua or whatever can
+   read.  Once something has written to the queue it is safe to be done with in whatever way.  Obviously if a
+   json_decode() is performed and it is invalid, then the thread may still be writing, or it's bad json.  Or the input
+   queues could be structs -- it writes the json first, and at the end sets a boolean to 1, then reading MUST be safe.
+   Lua: each thread must have its own Lua state. lua_newthread() shares global data.  Lua appears to have a global lock
+        across all threads.  you set a lock, all threads are locked and waiting while the locked thread messes with 
+        whatever data you are trying to lock.  NOT 100% on this.
+
+[ ]Message buffering:
+   Read a socket until a specified 'end' is found.  'end' is determined by a final json signifier (complete json request)
+   A connection will have a LIST of messages ready to be read.
+
+struct json_message {
+  char *message;
+  int ready;
+};
+
+struct node {
+  node *next, *prev;
+  void *obj;
+};
+
+struct list {
+  node *head;
+  node *tail;
+// node *current;
+  int size;
+}
+
+struct iterator {
+  node *current;
+  node *next;
+  node *prev;
+};
+
+message_list = list_new();
+JSON_MESSAGE *message = json_message_create();
+
+list_add(message_list, message);
+
+
+for(i = 0; i < message_list->size; i++) {
+   message = list_get(message_list, i);
+   call_function();
+}
+
+ITERATOR *i;
+JSON_MESSAGE *message;
+for(message = iterate_begin(i, message_list); message; message = iterate_next(i)) {
+	list_remove(message_list, i);
+}
+
+buffer_obj->next
+buffer_obj->ok_to_read
+
+1.
+conn reads, creates buffer obj, marks as ready
+2.
+conn reads, creates buffer obj, appends, starts writing string
+lua reads first obj, processes, marks it finished, goes to next one
+conn finishes writing, marks finished
+lua sees finished, starts reading, marks finished, exits
+3.
+conn cleanup, while(finished writing)->free
+lua starts going through list, sees first one is finished
+conn cleans up first one and removes all pointers, etc
+lua tries to use ->next flag, starts going through the free list
+2.2.
+list is currently R->0
+conn reads, appends, starts writing.. R->W->0
+lua reads first obj, processes it, removes from list, goes to next element.. W->0
+conn still writing, lua exits OR conn finishes, lua sees this, reads and removes.. 0
+2.3
+list R->0
+lua begins reading
+conn goes through list,
+lua finishes, removes it
+conn now going through free list
+
+with iterators
+
+
+
+
+
+
+
+
+
+
