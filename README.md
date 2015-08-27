@@ -17,7 +17,8 @@ Things I did in consideration of speed:<br>
 1) I built a "smart buffer" object, that keeps buffers in memory and re-uses them.  It creates buffers of varying sizes and if a connection sends more data than their current buffer needs, it will be given a bigger buffer.  Once the connection closes, the buffer is kept in memory, cleared, ready to be re-used.<br>
 2) Used <a href="http://www.kegel.com/c10k.html">epoll</a><br>
 3) As far as the HTTP side goes, I read minimum headers, only looking for what I needed (like KEEPALIVE).<br>
+4) The profiling I mentioned above, to troubleshoot what was causing any slowness<br>
 
-My next phase for speed was to introduce threads and buffer lists -- see buffer_list.c and ideas.txt.  But I never finished this step.
+My next phase for speed was to introduce threads and buffer lists -- see buffer_list.c and ideas.txt.  But I never finished this step.  Also I was considering a connection pool, as from what I recall, linux creating and destroying connections all the time was a decent part of the overhead.
 
 Have fun!
