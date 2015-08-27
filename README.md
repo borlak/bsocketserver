@@ -19,6 +19,6 @@ Things I did in consideration of speed:<br>
 3) As far as the HTTP side goes, I read minimum headers, only looking for what I needed (like KEEPALIVE).<br>
 4) The profiling I mentioned above, to troubleshoot what was causing any slowness<br>
 
-My next phase for speed was to introduce threads and buffer lists -- see buffer_list.c and ideas.txt.  But I never finished this step.  Also I was considering a connection pool, as from what I recall, linux creating and destroying connections all the time was a decent part of the overhead.
+My next phase for speed was to introduce threads and buffer lists -- see buffer_list.c and ideas.txt.  But I never finished this step.
 
 Have fun!
