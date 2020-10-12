@@ -1,7 +1,7 @@
 <?php
 
-$exec_location = "/home/qserver/";
-$exec_name = "qserver";
+$exec_location = "/home/bserver/";
+$exec_name = "bserver";
 
 $options = getopt("a:p::l::v::m::");
 
@@ -21,7 +21,7 @@ $executable = $exec_location.$exec_name." -a{$options["a"]}"
 	.(isset($options["l"]) ? " > {$options["l"]}" : " > /dev/null");
 
 // check if the daemon is already running... counting this one there will be 2
-$daemon_running = (int) `ps aux | grep qserverd.php | grep -v "grep" | wc -l`;
+$daemon_running = (int) `ps aux | grep bserverd.php | grep -v "grep" | wc -l`;
 if($daemon_running >= 2) {
 	exit("Daemon already running, exiting...");
 }
@@ -32,7 +32,7 @@ $last_bin_position = 0;
 $server_starting = false;
 $starting_count = 0;
 while(1) {
-	$server_running = (int) `ps aux | grep qserver | grep -v "grep" | grep -v "qserverd" | wc -l`;
+	$server_running = (int) `ps aux | grep bserver | grep -v "grep" | grep -v "bserverd" | wc -l`;
 	
 	if($server_starting) {
 		if($starting_count++ > 5) {
@@ -73,7 +73,7 @@ while(1) {
 function startServer() {
 	global $executable, $server_starting;
 	$server_starting = true;
-	exec("killall qserver");
+	exec("killall bserver");
 	exec("killall curl");
 	exec($executable);
 }
