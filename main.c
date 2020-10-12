@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 	}
 
 	// get md5 of *.[ch] files to use as a Version checker
-	if((fp_md5 = fopen("/home/qserver/files_md5","r")) != 0) {
+	if((fp_md5 = fopen("/home/bserver/files_md5","r")) != 0) {
 		char buf[128] = {'\0'};
 		char *p = 0;
 		if(fgets(buf, 127, fp_md5)) {
